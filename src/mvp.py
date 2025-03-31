@@ -28,6 +28,11 @@ dp = Dispatcher()
 database = Database(DB_DSN)
 chatgpt = MyChatGPT(database)
 
+async def keep_typing(chat_id):
+    asyncio.sleep(5)    # wait before "typing" the text
+    while True:
+        await bot.send_chat_action(chat_id, "typing")
+        await asyncio.sleep(4)  # Refresh every 4s (before 5s limit)
 
 
 # /start
@@ -50,7 +55,11 @@ async def message_handler(message: Message):
     user_info = f"Received message from {message.from_user.full_name} (ID: {message.from_user.id})"
     print(user_info)  # Log user info (use dp.message.middleware(LoggingMiddleware()); class LoggingMiddleware(BaseMiddleware):)
     print("\tQ:", message.text)
+
+    task = asyncio.create_task(keep_typing(message.chat.id)) # change this (message.chat.id) if you ever plan on adding groupchat support
     answer = await chatgpt.message_chatgpt(message.text, message.from_user.id)
+    task.cancel()
+    
     print("\tA:", answer)
     await message.answer(answer)
 
