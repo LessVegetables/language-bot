@@ -29,6 +29,11 @@ dp = Dispatcher()
 database = Database(DB_DSN)
 chatgpt = MyChatGPT(database)
 
+async def keep_typing(chat_id):
+    asyncio.sleep(5)    # wait before "typing" the text
+    while True:
+        await bot.send_chat_action(chat_id, "typing")
+        await asyncio.sleep(4)  # Refresh every 4s (before 5s limit)
 
 def get_translator(lang):
     return gettext.translation("bot", localedir="locales", languages=[lang], fallback=True)
