@@ -4,3 +4,4 @@
 *.code-workspace
 /src/__pycache__
 /testing
+requirements copy.txt
