@@ -1,22 +1,6 @@
 openai
-# psycopg2-binary
 psycopg2
 aiogram
 asyncpg
-# dependency-injector
-
-
-
-
-
-# manual db
-# brew install postgresql
-# brew services start postgresql
-# pg_isready
-# create new db and user
-# createdb mydb
-# psql postgres -c "CREATE USER myuser WITH ENCRYPTED PASSWORD 'mypassword';"
-# psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE mydb TO myuser;"
-# psql postgres -c "CREATE TABLE users (user_id BIGINT PRIMARY KEY, username TEXT, first_name TEXT, last_name TEXT, joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);"
-# psql postgres -c "CREATE TABLE messages (id SERIAL PRIMARY KEY, user_id BIGINT REFERENCES users(user_id), message TEXT, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP);"
-
+python-dotenv 
+babel

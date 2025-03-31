@@ -42,7 +42,7 @@ class Database:
                 row = await conn.fetchrow("SELECT * FROM userchats WHERE userid = $1", user_id)
 
                 if row is not None:
-                    raise Warning("User already exists in the database")
+                    return -1
                 
                 # init first chat with user
                 chat_id = await self.create_chat(user_id)
