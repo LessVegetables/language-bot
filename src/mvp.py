@@ -1,4 +1,5 @@
 import os
+import gettext
 import asyncio
 from aiogram import Bot, Dispatcher, types
 from aiogram.types import Message
@@ -29,19 +30,38 @@ database = Database(DB_DSN)
 chatgpt = MyChatGPT(database)
 
 
+def get_translator(lang):
+    return gettext.translation("bot", localedir="locales", languages=[lang], fallback=True)
+
+async def keep_typing(chat_id):
+    asyncio.sleep(5)    # wait before "typing" the text
+    while True:
+        await bot.send_chat_action(chat_id, "typing")
+        await asyncio.sleep(4)  # Refresh every 4s (before 5s limit)
+
 
 # /start
 @dp.message(Command("start"))
 async def start_handler(message: Message):
     user = message.from_user
 
-    await database.add_user(user.id)  # adds user id to db
+    lang = message.from_user.language_code  # Get user’s language
+    # lang = "ru"
+    _ = get_translator(lang).gettext  # Load correct translation
 
-    response = (
-        f"Hello, {user.first_name}!\n"
-        f"Your ID: {user.id}\n"
-        f"Username: @{user.username}" if user.username else "no username"
-    )
+    ans = await database.add_user(user.id)  # adds user id to db
+
+    if ans == -1:
+        response = _("You already have an active chat!\nSend a message to continue your convesation with your tutor.")
+
+    else:
+        response = _(
+            "Hello, {first_name}!\nYour ID: {id}\nUsername: @{username}"
+        ).format(
+            first_name=user.first_name,
+            id=user.id,
+            username=f"{user.username}" if user.username else _("no username")
+        )
 
     await message.answer(response)
 
@@ -50,7 +70,11 @@ async def message_handler(message: Message):
     user_info = f"Received message from {message.from_user.full_name} (ID: {message.from_user.id})"
     print(user_info)  # Log user info (use dp.message.middleware(LoggingMiddleware()); class LoggingMiddleware(BaseMiddleware):)
     print("\tQ:", message.text)
+
+    task = asyncio.create_task(keep_typing(message.chat.id)) # change this (message.chat.id) if you ever plan on adding groupchat support
     answer = await chatgpt.message_chatgpt(message.text, message.from_user.id)
+    task.cancel()
+
     print("\tA:", answer)
     await message.answer(answer)
 

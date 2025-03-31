@@ -1,0 +1,41 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025 DANIEL GEHRMAN
+# This file is distributed under the same license as the PACKAGE package.
+# Daniel Gehrman <danielgehrman@icloud.com>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-04-01 03:14+0700\n"
+"PO-Revision-Date: 2025-04-01 02:30+0700\n"
+"Last-Translator: Daniel Gehrman <danielgehrman@icloud.com>\n"
+"Language-Team: Russian <ru@li.org>\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/mvp.py:55
+msgid ""
+"You already have an active chat!\n"
+"Send a message to continue your convesation with your tutor."
+msgstr ""
+"У вас уже есть активный чат!\n"
+"Отправьте сообщение чтобы продолжить общение с репетитором."
+
+#: src/mvp.py:59
+#, python-brace-format
+msgid ""
+"Hello, {first_name}!\n"
+"Your ID: {id}\n"
+"Username: @{username}"
+msgstr ""
+"Привет, {first_name}!\n"
+"Ваш ID: {id}\n"
+"Username: @{username}"
+
+#: src/mvp.py:63
+msgid "no username"
+msgstr "нет username"
