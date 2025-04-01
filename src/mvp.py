@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 from database import Database
 from chat import MyChatGPT
+from keyboards import get_main_keyboard
 
 load_dotenv()
 
@@ -68,7 +69,7 @@ async def start_handler(message: Message):
             username=f"{user.username}" if user.username else _("no username")
         )
 
-    await message.answer(response)
+    await message.answer(response, reply_markup=get_main_keyboard())
 
 @dp.message()
 async def message_handler(message: Message):
