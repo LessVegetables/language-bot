@@ -89,6 +89,7 @@ class Database:
             return await conn.fetchrow("SELECT * FROM chatstable WHERE chatid = $1", uuid.UUID(chat_id))
     
 
+    # getting informatio from db
     async def retrieve_conversation(self, chat_id: str) -> list:
         await self.check_connection()
 
@@ -154,7 +155,45 @@ class Database:
     #             )
         
     #     return
+    
+    async def get_conversation_summary(self, chat_id: str) -> str:
+        await self.check_connection()
 
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                row = await conn.fetchrow("SELECT conversation_summary FROM chatstable WHERE chatid = $1", chat_id)
+                if row and row["conversation_summary"]:
+                    conversation_summary = row["conversation_summary"]
+                else:
+                    conversation_summary = "there is not summary yet. This most likely means that the user is chatting with you for the first time."
+                return conversation_summary
+    
+    async def get_bot_personality_summary(self, chat_id: str) -> str:
+        await self.check_connection()
+
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                row = await conn.fetchrow("SELECT personality_summary FROM chatstable WHERE chatid = $1", chat_id)
+                if row and row["personality_summary"]:
+                    bot_personality_summary = row["personality_summary"]
+                else:
+                    bot_personality_summary = "you have yet to create a personality."
+                return bot_personality_summary
+    
+    async def get_user_details(self, chat_id: str) -> str:
+        await self.check_connection()
+
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                row = await conn.fetchrow("SELECT user_details FROM chatstable WHERE chatid = $1", chat_id)
+                if row and row["user_details"]:
+                    user_details = row["user_details"]
+                else:
+                    user_details = "the user has not provided any details about him/her self yet."
+                return user_details
+
+
+    # writing informatio to db
     async def store_conversation(self, chat_id: str, user_message: str, assistant_response: str):
         await self.check_connection()
 
@@ -185,4 +224,19 @@ class Database:
                 await conn.execute(
                     "UPDATE chatstable SET chatdailyconversation = $1 WHERE chatid = $2",
                     json.dumps(conversation), chat_id
+                )
+    
+    async def store_conversation_summary(self, chat_id: str, new_summary: str) -> str:
+        await self.check_connection()
+
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                row = await conn.fetchrow(
+                    "SELECT conversation_summary FROM chatstable WHERE chatid = $1", chat_id
+                )
+
+                # Store back into the database
+                await conn.execute(
+                    "UPDATE chatstable SET conversation_summary = $1 WHERE chatid = $2",
+                    new_summary, chat_id
                 )

@@ -14,5 +14,8 @@ CREATE TABLE ChatsTable (
     -- Summary of the conversation
     chatdailyconversation JSONB,
     -- JSON formatted daily conversation
-    chatsettings JSONB -- JSON formatted chat settings
+    chat_settings JSONB, -- JSON formatted chat settings
+    conversation_summary TEXT,
+    personality_summary TEXT,
+    user_details TEXT
 );
