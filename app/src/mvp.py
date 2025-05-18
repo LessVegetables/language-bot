@@ -8,7 +8,8 @@ from aiogram.filters import Command
 from dotenv import load_dotenv
 
 from database import Database
-from chat import MyChatGPT
+from chat import MyChatGPT, HelperChatGPT
+from manager import BackgroundUserChatProcess
 
 load_dotenv()
 
@@ -28,6 +29,10 @@ bot = Bot(token=TOKEN)
 dp = Dispatcher()
 database = Database(DB_DSN)
 chatgpt = MyChatGPT(database)
+
+helper = HelperChatGPT()
+manager = BackgroundUserChatProcess(helper)
+
 
 async def keep_typing(chat_id):
     asyncio.sleep(5)    # wait before "typing" the text
@@ -69,6 +74,19 @@ async def start_handler(message: Message):
         )
 
     await message.answer(response)
+
+# /chat-summary
+@dp.message(Command("chat-summary"))
+async def chat_summary(message: Message):
+
+    chat_id = await database.get_current_chat_id(message.from_user.id)
+    summary = await manager.run_conversation_summary(chat_id)
+
+    lang = message.from_user.language_code  # Get user’s language
+    _ = get_translator(lang).gettext  # Load correct translation
+
+    await message.answer(_("Your chat summary:\n") + summary)
+    
 
 @dp.message()
 async def message_handler(message: Message):
